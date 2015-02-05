@@ -42,7 +42,7 @@ package org.apache.commons.text.diff;
  * the second one.
  *
  * <p>
- * This class has been adapted from the commons-collections implementation.
+ * This code has been adapted from Apache Commons Collections 4.0.
  * </p>
  *
  * @see EditScript
@@ -323,48 +323,6 @@ public class StringsComparator {
         public int getDiag() {
             return diag;
         }
-    }
-
-    public static void main(String[] args) {
-        StringsComparator sc = new StringsComparator("O Bruno eh um bom rapaz. Ele eh do Brasil.", "O Bruno foi um bom rapaz. Ele eh do Brasil .");
-        EditScript<Character> es = sc.getScript();
-        es.visit(new CommandVisitor<Character>() {
-
-            boolean nlAdd = true;
-            boolean nlRemove = true;
-
-            @Override
-            public void visitInsertCommand(Character object) {
-                if (nlAdd) {
-                    System.out.println();
-                    System.out.print("> ");
-                    nlAdd = false;
-                }
-                System.out.print(object);
-            }
-
-            @Override
-            public void visitKeepCommand(Character object) {
-                if (!nlAdd) {
-                    nlAdd = true;
-                }
-                if (!nlRemove) {
-                    nlRemove = true;
-                    System.out.println();
-                }
-                System.out.print(object);
-            }
-
-            @Override
-            public void visitDeleteCommand(Character object) {
-                if (nlRemove) {
-                    System.out.println();
-                    System.out.print("< ");
-                    nlRemove = false;
-                }
-                System.out.print(object);
-            }
-        });
     }
 
 }

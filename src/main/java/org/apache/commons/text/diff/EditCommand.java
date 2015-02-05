@@ -41,6 +41,10 @@ package org.apache.commons.text.diff;
  * and the <code>equals</code> method is specialized.
  * </p>
  *
+ * <p>
+ * This code has been adapted from Apache Commons Collections 4.0.
+ * </p>
+ *
  * @see StringsComparator
  * @see EditScript
  *
