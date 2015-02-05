@@ -24,12 +24,12 @@ package org.apache.commons.text.diff;
  * transforming the first sequence into the second sequence uses an instance of
  * this class to represent the deletion of this object. The objects embedded in
  * these type of commands always come from the first sequence.
+ * </p>
  *
- * @see SequencesComparator
+ * @see StringsComparator
  * @see EditScript
  *
- * @since 4.0
- * @version $Id: DeleteCommand.java 1477760 2013-04-30 18:34:03Z tn $
+ * @since 1.0
  */
 public class DeleteCommand<T> extends EditCommand<T> {
 

@@ -1,25 +1,96 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.commons.text.diff;
 
-
-
+/**
+ * <p>
+ * It is guaranteed that the comparisons will always be done as
+ * <code>o1.equals(o2)</code> where <code>o1</code> belongs to the first
+ * sequence and <code>o2</code> belongs to the second sequence. This can
+ * be important if subclassing is used for some elements in the first
+ * sequence and the <code>equals</code> method is specialized.
+ * </p>
+ * <p>
+ * Comparison can be seen from two points of view: either as giving the smallest
+ * modification allowing to transform the first sequence into the second one, or
+ * as giving the longest sequence which is a subsequence of both initial
+ * sequences. The <code>equals</code> method is used to compare objects, so any
+ * object can be put into sequences. Modifications include deleting, inserting
+ * or keeping one object, starting from the beginning of the first sequence.
+ * </p>
+ * <p>
+ * This class implements the comparison algorithm, which is the very efficient
+ * algorithm from Eugene W. Myers
+ * <a href="http://www.cis.upenn.edu/~bcpierce/courses/dd/papers/diff.ps">
+ * An O(ND) Difference Algorithm and Its Variations</a>. This algorithm produces
+ * the shortest possible {@link EditScript edit script} containing all the
+ * {@link EditCommand commands} needed to transform the first sequence into
+ * the second one.
+ *
+ * <p>
+ * This class has been adapted from the commons-collections implementation.
+ * </p>
+ *
+ * @see EditScript
+ * @see EditCommand
+ * @see CommandVisitor
+ *
+ * @since 1.0
+ */
 public class StringsComparator {
-    
+
+    /**
+     * First character sequence.
+     */
     private final String left;
+    /**
+     * Second character sequence.
+     */
     private final String right;
-    
+
     /** Temporary variables. */
     private final int[] vDown;
     private final int[] vUp;
-    
+
+    /**
+     * Simple constructor.
+     * <p>
+     * Creates a new instance of StringsComparator.
+     * </p>
+     * <p>
+     * It is <em>guaranteed</em> that the comparisons will always be done as
+     * <code>o1.equals(o2)</code> where <code>o1</code> belongs to the first
+     * sequence and <code>o2</code> belongs to the second sequence. This can be
+     * important if subclassing is used for some elements in the first sequence
+     * and the <code>equals</code> method is specialized.
+     * </p>
+     *
+     * @param left first character sequence to be compared
+     * @param right second character sequence to be compared
+     */
     public StringsComparator(String left, String right) {
         this.left = left;
         this.right = right;
-        
+
         final int size = left.length() + right.length() + 2;
         vDown = new int[size];
         vUp   = new int[size];
     }
-    
+
     /**
      * Get the {@link EditScript} object.
      * <p>
@@ -29,12 +100,13 @@ public class StringsComparator {
      * {@link KeepCommand keep commands} come from the first sequence. This can
      * be important if subclassing is used for some elements in the first
      * sequence and the <code>equals</code> method is specialized.
+     * </p>
      *
      * @return the edit script resulting from the comparison of the two
      *         sequences
      */
-    public EditScript getScript() {
-        final EditScript script = new EditScript();
+    public EditScript<Character> getScript() {
+        final EditScript<Character> script = new EditScript<Character>();
         buildScript(0, left.length(), 0, right.length(), script);
         return script;
     }
@@ -49,7 +121,7 @@ public class StringsComparator {
      * @param script the edited script
      */
     private void buildScript(final int start1, final int end1, final int start2, final int end2,
-            final EditScript script) {
+            final EditScript<Character> script) {
         final Snake middle = getMiddleSnake(start1, end1, start2, end2);
 
         if (middle == null
@@ -60,15 +132,15 @@ public class StringsComparator {
             int j = start2;
             while (i < end1 || j < end2) {
                 if (i < end1 && j < end2 && left.charAt(i) == right.charAt(j)) {
-                    script.append(new KeepCommand(left.charAt(i)));
+                    script.append(new KeepCommand<Character>(left.charAt(i)));
                     ++i;
                     ++j;
                 } else {
                     if (end1 - start1 > end2 - start2) {
-                        script.append(new DeleteCommand(left.charAt(i)));
+                        script.append(new DeleteCommand<Character>(left.charAt(i)));
                         ++i;
                     } else {
-                        script.append(new InsertCommand(right.charAt(j)));
+                        script.append(new InsertCommand<Character>(right.charAt(j)));
                         ++j;
                     }
                 }
@@ -80,16 +152,33 @@ public class StringsComparator {
                         start2, middle.getStart() - middle.getDiag(),
                         script);
             for (int i = middle.getStart(); i < middle.getEnd(); ++i) {
-                script.append(new KeepCommand(left.charAt(i)));
+                script.append(new KeepCommand<Character>(left.charAt(i)));
             }
             buildScript(middle.getEnd(), end1,
                         middle.getEnd() - middle.getDiag(), end2,
                         script);
         }
     }
-    
+
+    /**
+     * Get the middle snake corresponding to two subsequences of the
+     * main sequences.
+     * <p>
+     * The snake is found using the MYERS Algorithm (this algorithms has
+     * also been implemented in the GNU diff program). This algorithm is
+     * explained in Eugene Myers article:
+     * <a href="http://www.cs.arizona.edu/people/gene/PAPERS/diff.ps">
+     * An O(ND) Difference Algorithm and Its Variations</a>.
+     * </p>
+     *
+     * @param start1  the begin of the first sequence to be compared
+     * @param end1  the end of the first sequence to be compared
+     * @param start2  the begin of the second sequence to be compared
+     * @param end2  the end of the second sequence to be compared
+     * @return the middle snake
+     */
     private Snake getMiddleSnake(int start1, int end1, int start2, int end2) {
-     // Myers Algorithm
+        // Myers Algorithm
         // Initialisations
         final int m = end1 - start1;
         final int n = end2 - start2;
@@ -160,7 +249,7 @@ public class StringsComparator {
         // this should not happen
         throw new RuntimeException("Internal Error");
     }
-    
+
     /**
      * Build a snake.
      *
@@ -235,17 +324,17 @@ public class StringsComparator {
             return diag;
         }
     }
-    
+
     public static void main(String[] args) {
         StringsComparator sc = new StringsComparator("O Bruno eh um bom rapaz. Ele eh do Brasil.", "O Bruno foi um bom rapaz. Ele eh do Brasil .");
-        EditScript es = sc.getScript();
-        es.visit(new CommandVisitor() {
-            
+        EditScript<Character> es = sc.getScript();
+        es.visit(new CommandVisitor<Character>() {
+
             boolean nlAdd = true;
             boolean nlRemove = true;
 
             @Override
-            public void visitInsertCommand(Object object) {
+            public void visitInsertCommand(Character object) {
                 if (nlAdd) {
                     System.out.println();
                     System.out.print("> ");
@@ -255,7 +344,7 @@ public class StringsComparator {
             }
 
             @Override
-            public void visitKeepCommand(Object object) {
+            public void visitKeepCommand(Character object) {
                 if (!nlAdd) {
                     nlAdd = true;
                 }
@@ -267,7 +356,7 @@ public class StringsComparator {
             }
 
             @Override
-            public void visitDeleteCommand(Object object) {
+            public void visitDeleteCommand(Character object) {
                 if (nlRemove) {
                     System.out.println();
                     System.out.print("< ");

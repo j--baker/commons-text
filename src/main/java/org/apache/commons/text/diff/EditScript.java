@@ -25,7 +25,7 @@ import java.util.List;
  * <p>
  * An edit script is the most general view of the differences between two
  * sequences. It is built as the result of the comparison between two sequences
- * by the {@link SequencesComparator SequencesComparator} class. The user can
+ * by the {@link StringsComparator StringsComparator} class. The user can
  * walk through it using the <em>visitor</em> design pattern.
  * <p>
  * It is guaranteed that the objects embedded in the {@link InsertCommand insert
@@ -35,13 +35,12 @@ import java.util.List;
  * is used for some elements in the first sequence and the <code>equals</code>
  * method is specialized.
  *
- * @see SequencesComparator
+ * @see StringsComparator
  * @see EditCommand
  * @see CommandVisitor
  * @see ReplacementsHandler
  *
- * @since 4.0
- * @version $Id: EditScript.java 1477760 2013-04-30 18:34:03Z tn $
+ * @since 1.0
  */
 public class EditScript<T> {
 

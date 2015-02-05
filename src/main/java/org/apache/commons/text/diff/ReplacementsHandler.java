@@ -22,8 +22,7 @@ import java.util.List;
  * This interface is devoted to handle synchronized replacement sequences.
  *
  * @see ReplacementsFinder
- * @since 4.0
- * @version $Id: ReplacementsHandler.java 1543277 2013-11-19 00:53:50Z ggregory $
+ * @since 1.0
  */
 public interface ReplacementsHandler<T> {
 

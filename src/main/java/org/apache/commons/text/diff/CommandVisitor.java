@@ -28,14 +28,17 @@ package org.apache.commons.text.diff;
  * it will perform the loop over all commands in the script and the
  * proper methods of the user class will be called as the commands are
  * encountered.
+ * </p>
  * <p>
  * The implementation of the user visitor class will depend on the
  * need. Here are two examples.
+ * </p>
  * <p>
  * The first example is a visitor that build the longest common
  * subsequence:
+ * </p>
  * <pre>
- * import org.apache.commons.collections4.comparators.sequence.CommandVisitor;
+ * import org.apache.commons.text.diff.CommandVisitor;
  *
  * import java.util.ArrayList;
  *
@@ -67,7 +70,7 @@ package org.apache.commons.text.diff;
  * The second example is a visitor that shows the commands and the way
  * they transform the first sequence into the second one:
  * <pre>
- * import org.apache.commons.collections4.comparators.sequence.CommandVisitor;
+ * import org.apache.commons.text.diff.CommandVisitor;
  *
  * import java.util.Arrays;
  * import java.util.ArrayList;
@@ -97,7 +100,7 @@ package org.apache.commons.text.diff;
  *   }
  *
  *   private void display(String commandName, Object object) {
- *     System.out.println(commandName + " " + object + " ->" + this);
+ *     System.out.println(commandName + " " + object + ": " + this);
  *   }
  *
  *   public String toString() {
@@ -114,8 +117,7 @@ package org.apache.commons.text.diff;
  * }
  * </pre>
  *
- * @since 4.0
- * @version $Id: CommandVisitor.java 1477760 2013-04-30 18:34:03Z tn $
+ * @since 1.0
  */
 public interface CommandVisitor<T> {
 

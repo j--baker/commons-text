@@ -34,25 +34,26 @@ import java.util.List;
  * {@link DeleteCommand delete}, {@link KeepCommand keep} and
  * {@link InsertCommand insert} commands by fewer replacements acting on
  * complete sub-sequences.
+ * </p>
  * <p>
  * This class is devoted to perform this interpretation. It visits an
  * {@link EditScript edit script} (because it implements the
  * {@link CommandVisitor CommandVisitor} interface) and calls a user-supplied
  * handler implementing the {@link ReplacementsHandler ReplacementsHandler}
  * interface to process the sub-sequences.
+ * </p>
  *
  * @see ReplacementsHandler
  * @see EditScript
- * @see SequencesComparator
+ * @see StringsComparator
  *
- * @since 4.0
- * @version $Id: ReplacementsFinder.java 1477760 2013-04-30 18:34:03Z tn $
+ * @since 1.0
  */
 public class ReplacementsFinder<T> implements CommandVisitor<T> {
 
     private final List<T> pendingInsertions;
     private final List<T> pendingDeletions;
-    private int     skipped;
+    private int skipped;
 
     /** Handler to call when synchronized sequences are found. */
     private final ReplacementsHandler<T> handler;
@@ -83,6 +84,7 @@ public class ReplacementsFinder<T> implements CommandVisitor<T> {
      * <p>
      * When a synchronization object is identified, the pending insertions and
      * pending deletions sets are provided to the user handler as subsequences.
+     * </p>
      *
      * @param object  synchronization object detected
      */
