@@ -24,6 +24,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Tests for the StringsComparator.
+ */
 public class StringsComparatorTest {
 
     private List<String> before;
