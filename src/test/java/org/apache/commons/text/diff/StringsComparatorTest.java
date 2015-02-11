@@ -15,24 +15,20 @@
  * limitations under the License.
  */
 package org.apache.commons.text.diff;
-
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 /**
  * Tests for the StringsComparator.
  */
 public class StringsComparatorTest {
-
     private List<String> before;
     private List<String> after;
     private int[]        length;
-
+    private int[]        lcs;
     @Test
     public void testLength() {
         for (int i = 0; i < before.size(); ++i) {
@@ -40,7 +36,13 @@ public class StringsComparatorTest {
             Assert.assertEquals(length[i], comparator.getScript().getModifications());
         }
     }
-
+    @Test
+    public void testLongestCommonSubsequence() {
+        for (int i = 0; i < before.size(); ++i) {
+            final StringsComparator comparator =  new StringsComparator(before.get(i), after.get(i));
+            Assert.assertEquals(lcs[i], comparator.getScript().getLCSLength());
+        }
+    }
     @Test
     public void testExecution() {
         for (int i = 0; i < before.size(); ++i) {
@@ -49,35 +51,25 @@ public class StringsComparatorTest {
             Assert.assertEquals(after.get(i), ev.getString());
         }
     }
-
     private class ExecutionVisitor<T> implements CommandVisitor<T> {
-
         private StringBuilder v;
-
         public ExecutionVisitor() {
             v = new StringBuilder();
         }
-
         public void visitInsertCommand(final T object) {
             v.append(object);
         }
-
         public void visitKeepCommand(final T object) {
             v.append(object);
         }
-
         public void visitDeleteCommand(final T object) {
         }
-
         public String getString() {
             return v.toString();
         }
-
     }
-
     @Before
     public void setUp() {
-
         before = Arrays.asList(
             "bottle",
             "nematode knowledge",
@@ -88,7 +80,6 @@ public class StringsComparatorTest {
             "glop glop",
             "coq",
             "spider-man");
-
         after = Arrays.asList(
             "noodle",
             "empty bottle",
@@ -99,7 +90,6 @@ public class StringsComparatorTest {
             "pas glop pas glop",
             "ane",
             "klingon");
-
         length = new int[] {
             6,
             16,
@@ -111,14 +101,22 @@ public class StringsComparatorTest {
             6,
             13
         };
-
+        lcs = new int[] {
+            3,
+            7,
+            0,
+            0,
+            6,
+            4,
+            9,
+            0,
+            2
+        };
     }
-
     @After
     public void tearDown() {
         before = null;
         after  = null;
         length = null;
     }
-
 }
