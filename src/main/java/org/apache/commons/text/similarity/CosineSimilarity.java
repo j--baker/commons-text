@@ -16,6 +16,52 @@
  */
 package org.apache.commons.text.similarity;
 
-public class CosineSimilarity {
+/**
+ * <p>Measures the Cosine similarity of two CharSequences. It treats the CharSequences as
+ * two vectors of an inner product space and compares the angle between them.</p>
+ *
+ * <p>
+ * For further explanation about the Cosine Similarity, take a look at its
+ * Wikipedia page at http://en.wikipedia.org/wiki/Cosine_similarity.
+ * </p>
+ *
+ * @since 0.1
+ */
+public class CosineSimilarity implements StringMetric<Double> {
+
+    @Override
+    public Double compare(CharSequence left, CharSequence right) {
+        if (left == null || right == null) {
+            throw new IllegalArgumentException("String parameters must not be null");
+        }
+        long dotProduct = dot(left, right);
+        double d1 = 0.0d;
+        for (int i = 0; i < left.length(); ++i) {
+            d1 += Math.pow(((int) left.charAt(i)), 2);
+        }
+        double d2 = 0.0d;
+        for (int i = 0; i < right.length(); ++i) {
+            d2 += Math.pow(((int) right.charAt(i)), 2);
+        }
+        double cosineSimilarity = dotProduct / (double) (Math.sqrt(d1) * Math.sqrt(d2));
+        return cosineSimilarity;
+    }
+
+    /**
+     * Computes the dot product of two CharSequences. It ignores remaining characters. It means
+     * that if a string is longer than other, then a smaller part of it will be used to compute
+     * the dot product.
+     * 
+     * @param left left string
+     * @param right right string
+     * @return the dot product
+     */
+    protected long dot(CharSequence left, CharSequence right) {
+        long dotProduct = 0;
+        for (int i = 0; i < left.length() && i < right.length(); ++i) {
+            dotProduct += (((int) left.charAt(i)) * ((int) right.charAt(i)));
+        }
+        return dotProduct;
+    }
 
 }
